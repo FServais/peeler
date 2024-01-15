@@ -26,6 +26,11 @@ fn caesar_cipher(input: &str, shift: i32) -> String {
     let mut alphabet_index_to_char = HashMap::new();
     let mut alphabet_char_to_index = HashMap::new();
 
+    // Check that shift is positive
+    if shift < 0 {
+        return caesar_cipher(input, shift + alphabet.chars().count() as i32);
+    }
+
     for (i, c) in alphabet.chars().enumerate() {
         alphabet_index_to_char.insert(i, c);
         alphabet_char_to_index.insert(c, i);
@@ -40,4 +45,18 @@ fn caesar_cipher(input: &str, shift: i32) -> String {
     }
 
     output
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_caesar_cipher() {
+        assert_eq!(caesar_cipher("hello", 3), "khoor");
+        assert_eq!(caesar_cipher("hello", 0), "hello");
+        assert_eq!(caesar_cipher("hello", 26), "hello");
+        assert_eq!(caesar_cipher("hello", 27), "ifmmp");
+        assert_eq!(caesar_cipher("hello", -1), "gdkkn");
+    }
 }
