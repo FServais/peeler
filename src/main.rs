@@ -32,10 +32,30 @@ fn caesar_cipher(input: &str, shift: i32) -> String {
     let (alphabet_index_to_char, alphabet_char_to_index) = create_alphabet_maps(&alphabet);
 
     for c in input.chars() {
-        let i = alphabet_char_to_index.get(&c).unwrap();
+        let i: &usize;
+        let lower_c = c.to_ascii_lowercase();
+        match alphabet_char_to_index.get(&lower_c) {
+            None => {
+                println!("Character {} not in alphabet", c);
+                output.push(c);
+                continue;
+            },
+            _ => {
+                i = alphabet_char_to_index.get(&lower_c).unwrap();
+            }
+        }
         let new_i = (i + shift as usize) % 26;
-        let new_c = alphabet_index_to_char.get(&new_i).unwrap();
-        output.push(*new_c);
+
+        match alphabet_index_to_char.get(&new_i) {
+            None => {
+                println!("Character at index {} not in alphabet", new_i);
+                output.push(c);
+                continue;
+            },
+            _ => {
+                output.push(*alphabet_index_to_char.get(&new_i).unwrap());
+            }
+        }
     }
 
     output
@@ -63,6 +83,7 @@ mod tests {
     #[test]
     fn test_caesar_cipher() {
         assert_eq!(caesar_cipher("hello", 3), "khoor");
+        assert_eq!(caesar_cipher("HELLO", 3), "khoor");
         assert_eq!(caesar_cipher("hello", 0), "hello");
         assert_eq!(caesar_cipher("hello", 26), "hello");
         assert_eq!(caesar_cipher("hello", 27), "ifmmp");
